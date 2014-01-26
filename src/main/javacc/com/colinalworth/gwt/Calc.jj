@@ -1,0 +1,63 @@
+//tutorial from http://www.cs.rit.edu/~ats/java/html/skript/8_JavaCC.htmld/
+
+// based on examples by Chuck McManis
+// recognize arithmetic expressions
+
+options
+{
+  STATIC = false;
+}
+
+PARSER_BEGIN(Calc)		// must define parser class
+package com.colinalworth.gwt.calc.shared;
+  public class Calc {
+    @com.google.gwt.core.shared.GwtIncompatible
+    public static void main (String args []) {
+      Calc parser = new Calc(System.in);
+      for (;;)
+	try {
+	  if (parser.expr() == -1)
+	    System.exit(0);
+	} catch (Exception e) {
+	  e.printStackTrace(); System.exit(1);
+	}
+    }
+  }
+PARSER_END(Calc)
+
+SKIP:				// defines input to be ignored
+  { " " | "\r" | "\t"
+  }
+
+TOKEN:				// defines token names
+  { < EOL: "\n" >
+  | < CONSTANT: ( <DIGIT> )+ >	// re: 1 or more
+  | < #DIGIT: ["0" - "9"] >	// private re
+  }
+
+int expr():			// expr: sum \n
+  {}				// -1 at eof, 0 at eol
+  { sum() <EOL>	{ return 1; }
+  | <EOL>	{ return 0; }
+  | <EOF>	{ return -1; }
+  }
+
+void sum():			// sum: product { +- product }
+  {}
+  { product() ( ( "+" | "-" ) product() )*
+  }
+
+void product():			// product: term { *%/ term }
+  {}
+  { term() ( ( "*" | "%" | "/" ) term() )*
+  }
+
+void term():			// term: +term | -term | (sum) | number
+  {}
+  { "+" term()
+  | "-" term()
+  | "(" sum() ")"
+  | <CONSTANT>
+  }
+
+
