@@ -1,0 +1,22 @@
+.code {
+    white-space: pre;
+    font-family: monospace;
+}
+
+.keyword {
+    font-weight: bold;
+    color: darkred;
+}
+.string, .character {
+    color: blue;
+}
+.symbol {
+    color: darkblue;
+}
+.comment {
+    color: gray;
+}
+
+.even {
+    background-color: #dddddd;
+}

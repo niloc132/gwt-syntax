@@ -1,0 +1,235 @@
+options
+{
+  STATIC = false;
+}
+
+PARSER_BEGIN(JavaParser)  // must define parser class
+package com.colinalworth.gwt.java.shared;
+
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+
+public class JavaParser {
+  SafeHtmlBuilder sb;
+  int lineCount = 0;
+}
+PARSER_END(JavaParser)
+
+//whitespace
+TOKEN:
+{ < WHITESPACE: " " | "\r" | "\t" >
+| < NEWLINE: "\n" | "\r" | "\r\n" >
+}
+
+//symbols, punct
+TOKEN:
+{ < LBRACE: "{" >
+| < RBRACE: "}" >
+| < LBRACKET: "[" >
+| < RBRACKET: "]" >
+| < LPAREN: "(" >
+| < RPAREN: ")" >
+| < LANGLE: "<" >
+| < RANGLE: ">" >
+| < COMMA: "," >
+| < DOT: "." >
+| < WILDCARD: "?" > // and ternary
+| < COLON: ":" >
+| < PLUS: "+" >
+| < MINUS: "-" >
+| < MULTIPLY: "*" >
+| < DIVIDE: "/" >
+| < ASSIGN: "=" >
+| < EQUALS: "==" >
+| < NEQUALS: "!=" >
+| < LTEQ: "<=" >
+| < GTEQ: ">=" >
+| < BIT_OR: "|" >
+| < BIT_AND: "&" >
+| < OR: "||" >
+| < AND: "&&" >
+| < BANG: "!" >
+| < INCR: "++" >
+| < DECR: "--" >
+| < INCR_ASSIGN: "+=" >
+| < DECR_ASSIGN: "-=" >
+| < MULT_ASSIGN: "*=" >
+| < DIV_ASSIGN: "/=" >
+| < VARARGS: "..." >
+| < SEMICOLON: ";" >
+| < AT: "@" >
+}
+
+//comments
+TOKEN:
+{ < LINE_COMMENT: "//" (~["\n","\r"])* >
+| < BLOCK_COMMENT: "/*" (~["*"])* "*" ("*" | (~["*","/"] (~["*"])* "*"))* "/" >
+| < JAVADOC_COMMENT: "/**" (~["*"])* "*" ("*" | (~["*","/"] (~["*"])* "*"))* "/" >
+}
+
+// keywords from http://docs.oracle.com/javase/tutorial/java/nutsandbolts/_keywords.html
+TOKEN:
+{ < ABSTRACT: "abstract" >
+| < ASSERT: "assert" >
+| < BOOLEAN: "boolean" >
+| < BREAK: "break" >
+| < BYTE: "byte" >
+| < CASE: "case" >
+| < CATCH: "catch" >
+| < CHAR: "CHAR" >
+| < CLASS: "class" >
+//| < CONST: "const" >
+| < CONTINUE: "continue" >
+| < DDEFAULT: "default" >
+| < DO: "do" >
+| < DOUBLE: "double" >
+| < ELSE: "else" >
+| < ENUM: "enum" >
+| < EXTENDS: "extends" >
+| < FINAL: "final" >
+| < FINALLY: "finally" >
+| < FLOAT: "float" >
+| < FOR: "for" >
+//| < GOTO: "goto" >
+| < IF: "IF" >
+| < IMPLEMENTS: "implements" >
+| < INSTANCEOF: "instanceof" >
+| < IMPORT: "import" >
+| < INT: "int" >
+| < INTERFACE: "interface" >
+| < LONG: "long" >
+| < NATIVE: "native" >
+| < NEW: "new" >
+| < PACKAGE: "package" >
+| < PRIVATE: "private" >
+| < PROTECTED: "protected" >
+| < PUBLIC: "public" >
+| < RETURN: "return" >
+| < SHORT: "short" >
+| < STATIC: "static" >
+| < STRICTFP: "strictfp" >
+| < SUPER: "super" >
+| < SWITCH: "switch" >
+| < SYNCHRONIZED: "synchronized" >
+| < THIS: "this" >
+| < THROW: "throw" >
+| < THROWS: "throws" >
+| < TRANSIENT: "transient" >
+| < TRY: "try" >
+| < VOID: "void" >
+| < VOLATILE: "volatile" >
+| < WHILE: "while" >
+}
+
+TOKEN:
+{ < IDENTIFIER: (["A"-"Z","a"-"z"] (["A"-"Z","a"-"z","0"-"9"])*) >
+}
+
+//Strings, chars, numbers
+TOKEN:
+{ <SINGLE_QUOTE:
+      "\'"
+      ( (~["\"", "\n", "\r"])
+        | ("\\"
+            ( ["n","t","r"] )
+          )
+      )
+      "\'"
+  >
+| <DOUBLE_QUOTE:
+      "\""
+      ( (~["\"", "\n", "\r"])
+        | ("\\"
+            ( ["n","t","r"] )
+          )
+      )*
+      "\""
+  >
+| <NUMBER: ( "0"
+           | ["1"-"9"] (["0"-"9"])*
+           | (["0"-"9"])+ "." (["0"-"9"])*
+           | "." (["0"-"9"])+
+           )
+  >
+}
+
+SafeHtml compilationUnit():
+{ sb = new SafeHtmlBuilder().appendHtmlConstant((lineCount++ % 2 == 0) ? "<div class='even'>" : "<div class='odd'>"); }
+{ (
+    ( keyword() | symbol()
+    | string() | character()
+    | number() | identifier()
+    | comment() | whitespace()
+    )*
+    ( <NEWLINE> {
+      sb.appendHtmlConstant("&nbsp;</div>").appendHtmlConstant((lineCount++ % 2 == 0) ? "<div class='even'>" : "<div class='odd'>");
+    })
+  )+
+  {
+    return sb.appendHtmlConstant("</div>").toSafeHtml();
+  }
+}
+
+void keyword():
+{ }
+{ ( <ABSTRACT> | <ASSERT> | <BOOLEAN> | <BREAK> | <BYTE>
+  | <CASE> | <CATCH> | <CHAR> | <CLASS> /*| <CONST>*/
+  | <CONTINUE> | <DDEFAULT> | <DO> | <DOUBLE> | <ELSE>
+  | <ENUM> | <EXTENDS> | <FINAL> | <FINALLY> | <FLOAT>
+  | <FOR> /*| <GOTO>*/ | <IF> | <IMPLEMENTS> | <IMPORT>
+  | <INSTANCEOF> | <INT> | <INTERFACE> | <LONG> | <NATIVE>
+  | <NEW> | <PACKAGE> | <PRIVATE> | <PROTECTED> | <PUBLIC>
+  | <RETURN> | <SHORT> | <STATIC> | <STRICTFP> | <SUPER>
+  | <SWITCH> | <SYNCHRONIZED> | <THIS> | <THROW> | <THROWS>
+  | <TRANSIENT> | <TRY> | <VOID> | <VOLATILE> | <WHILE> )
+  { sb.appendHtmlConstant("<span class='keyword'>").appendEscaped(token.image).appendHtmlConstant("</span>"); }
+}
+
+void symbol():
+{ }
+{ ( <LBRACE> | <RBRACE> | <LBRACKET> | <RBRACKET> | <LPAREN>
+  | <RPAREN> | <LANGLE> | <RANGLE> | <COMMA> | <DOT>
+  | <WILDCARD> | <COLON> | <PLUS> | <MINUS> | <MULTIPLY>
+  | <DIVIDE> | <ASSIGN> | <EQUALS> | <NEQUALS> | <LTEQ>
+  | <GTEQ> | <BIT_OR> | <BIT_AND> | <OR> | <AND>
+  | <BANG> | <INCR> | <DECR> | <INCR_ASSIGN> | <DECR_ASSIGN>
+  | <MULT_ASSIGN> | <DIV_ASSIGN> | <VARARGS> | <SEMICOLON>  | <AT>
+  )
+  { sb.appendHtmlConstant("<span class='symbol'>").appendEscaped(token.image).appendHtmlConstant("</span>"); }
+}
+
+void string():
+{ }
+{ ( <DOUBLE_QUOTE> )
+  { sb.appendHtmlConstant("<span class='string'>").appendEscaped(token.image).appendHtmlConstant("</span>"); }
+}
+
+void character():
+{ }
+{ ( <SINGLE_QUOTE> )
+  { sb.appendHtmlConstant("<span class='character'>").appendEscaped(token.image).appendHtmlConstant("</span>"); }
+}
+
+void number():
+{ }
+{ ( <NUMBER> )
+  { sb.appendEscaped(token.image); }
+}
+
+void identifier():
+{ }
+{ <IDENTIFIER>
+  { sb.appendEscaped(token.image); }
+}
+
+void comment():
+{ }
+{ ( <LINE_COMMENT> | <BLOCK_COMMENT> | <JAVADOC_COMMENT> )
+  { sb.appendHtmlConstant("<span class='comment'>").appendEscaped(token.image).appendHtmlConstant("</span>"); }
+}
+
+void whitespace():
+{ }
+{ ( <WHITESPACE> )
+  { sb.appendEscaped(token.image); }
+}

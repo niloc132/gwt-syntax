@@ -1,0 +1,32 @@
+.input, .output {
+    position:absolute;
+    top:0;
+    bottom:50px;
+    left:0;
+    right:0;
+    overflow:auto;
+    width:100%;
+
+    white-space: pre;
+    font-family: monospace;
+    font-size: medium;
+
+    border: 1px solid black;
+    padding: 2px;
+    margin: 0;
+}
+
+@if user.agent gecko1_8 {
+    .input, .output {
+        height: 90%;
+    }
+}
+
+.button {
+    position:  absolute;
+    bottom:0;
+}
+
+body {
+    overflow:hidden;
+}
