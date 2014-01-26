@@ -36,28 +36,32 @@ TOKEN:				// defines token names
   }
 
 int expr():			// expr: sum \n
-  {}				// -1 at eof, 0 at eol
-  { sum() <EOL>	{ return 1; }
-  | <EOL>	{ return 0; }
-  | <EOF>	{ return -1; }
+  { int val; }				// -1 at eof, 0 at eol
+  { val = sum() <EOL>	{ return val; }
   }
 
-void sum():			// sum: product { +- product }
-  {}
-  { product() ( ( "+" | "-" ) product() )*
+int sum() throws NumberFormatException:		// sum: product { +- product }
+  { int s, r; }					// returns value
+  { s = product()
+    ( "+" r = product()	{ s += r; }
+    | "-" r = product()	{ s -= r; }
+    )*			{ return s; }
   }
 
-void product():			// product: term { *%/ term }
-  {}
-  { term() ( ( "*" | "%" | "/" ) term() )*
+int product() throws NumberFormatException:	// product: term { *%/ term }
+  { int p, r;}					// returns value
+  { p = term()
+    ( "*" r = term()	{ p *= r; }
+    | "%" r = term()	{ p %= r; }
+    | "/" r = term()	{ p /= r; }
+    )*			{ return p; }
   }
 
-void term():			// term: +term | -term | (sum) | number
-  {}
-  { "+" term()
-  | "-" term()
-  | "(" sum() ")"
-  | <CONSTANT>
+int term() throws NumberFormatException:
+				// term: +term | -term | (sum) | number
+  { int t; }			// returns value
+  { "+" t = term()	{ return t; }
+  | "-" t = term()	{ return -t; }
+  | "(" t = sum() ")"	{ return t; }
+  | <CONSTANT>		{ return Integer.parseInt(token.image); }
   }
-
-
