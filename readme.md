@@ -5,6 +5,7 @@ came from http://cs.jsu.edu/wordpress/?p=72 and http://cs.jsu.edu/wordpress/?p=1
 one of the stumbling blocks mentioned, and I'm leaning on work done by https://github.com/restlet/restlet-framework-java
 and for the other (under the Apache2 license).
 
+Slides from the GWT Community Hangout topic on this https://docs.google.com/presentation/d/1pFWFe5SBVf_B06V8wEteaxQ2RO3wHaf51m7nPZ0VRAE/edit?usp=sharing
 
 ## Repo summary
 
