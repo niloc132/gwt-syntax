@@ -1,0 +1,9 @@
+<module rename-to="GwtCalcParser">
+  <inherits name="com.google.gwt.user.User" />
+  <inherits name="com.colinalworth.gwt.javacc.JavaCC" />
+
+  <source path="client" />
+  <source path="shared" />
+
+  <entry-point class="com.colinalworth.gwt.calc.client.SampleParser" />
+</module>
