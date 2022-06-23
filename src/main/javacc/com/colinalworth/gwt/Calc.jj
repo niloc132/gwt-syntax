@@ -11,7 +11,7 @@ options
 PARSER_BEGIN(Calc)		// must define parser class
 package com.colinalworth.gwt.calc.shared;
   public class Calc {
-    @com.google.gwt.core.shared.GwtIncompatible
+    @com.colinalworth.gwt.GwtIncompatible("sorry, dont want to reference System.in in GWT, and certainly not System.exit")
     public static void main (String args []) {
       Calc parser = new Calc(System.in);
       for (;;)
