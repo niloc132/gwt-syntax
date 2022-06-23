@@ -55,7 +55,7 @@ public class InputStreamReader extends Reader {
    * The source text to read.
    */
   public InputStreamReader(InputStream stream) {
-    this(stream.getText());
+    this("");
   }
 
   /**
@@ -67,7 +67,7 @@ public class InputStreamReader extends Reader {
    * The name of a supported charset.
    */
   public InputStreamReader(InputStream stream, String charsetName) {
-    this(stream.getText());
+    this("");
   }
 
   /**
@@ -98,7 +98,7 @@ public class InputStreamReader extends Reader {
   }
 
   @Override
-  public int read(char[] cbuf, int off, int len) throws IOException {
+  public int read(char[] cbuf, int off, int len) {
     if (position >= text.length())
       return -1;
     int n = Math.min(text.length() - position, len);

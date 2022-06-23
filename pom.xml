@@ -10,15 +10,33 @@
   <packaging>war</packaging>
 
   <properties>
-    <gwt.version>2.6.0</gwt.version>
-    <gwt.plugin.version>2.6.0-rc3</gwt.plugin.version>
+    <gwt.version>2.10.0</gwt.version>
+
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
   </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.gwtproject</groupId>
+        <artifactId>gwt</artifactId>
+        <version>${gwt.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+    </dependencies>
+  </dependencyManagement>
 
   <dependencies>
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-user</artifactId>
-      <version>${gwt.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-dev</artifactId>
     </dependency>
 
     <dependency>
@@ -36,35 +54,18 @@
     </resources>
     <plugins>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
+        <groupId>net.ltgt.gwt.maven</groupId>
         <artifactId>gwt-maven-plugin</artifactId>
-        <version>${gwt.plugin.version}</version>
-        <dependencies>
-          <dependency>
-            <groupId>com.google.gwt</groupId>
-            <artifactId>gwt-user</artifactId>
-            <version>${gwt.version}</version>
-          </dependency>
-          <dependency>
-            <groupId>com.google.gwt</groupId>
-            <artifactId>gwt-dev</artifactId>
-            <version>${gwt.version}</version>
-          </dependency>
-        </dependencies>
+        <version>1.0.1</version>
+        <configuration>
+          <moduleName>com.colinalworth.gwt.calc.GwtCalcParser</moduleName>
+          <failOnError>true</failOnError>
+        </configuration>
         <executions>
           <execution>
-            <phase>prepare-package</phase>
             <goals>
               <goal>compile</goal>
             </goals>
-            <configuration>
-              <strict>true</strict>
-              <soycDetailed>true</soycDetailed>
-              <compilerMetrics>true</compilerMetrics>
-              <compileReport>true</compileReport>
-              <disableCastChecking>false</disableCastChecking>
-              <disableClassMetadata>false</disableClassMetadata>
-            </configuration>
           </execution>
         </executions>
       </plugin>
